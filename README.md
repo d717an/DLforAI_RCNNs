@@ -40,18 +40,23 @@ With the images and training csv uploaded to google drive, I started modifying t
 
 Finally, I combined the test and training notebooks from the source into a common file. I experimented with having a "mode" variable to switch between training and testing, but found i didn't like erasing the outputs of my training code blocks everytime I wanted to test.
 
-### Results
-The results are mixed. Over the 40 epochs trained for the smaller anchor size, the training seems to progress favorably. The class accuracy of each
+### Results and Discussion
+The results are mixed. Over the 40 epochs trained for the smaller anchor size, the training seems to progress favorably. The class accuracy of each ground truth box improves, the RPN model losses improve with each epoch, as do the losses for the classification model. This model took ~20 minutes to train on 500 images, and ~40 minutes to load the data into the Google GPU. Given the session limit of 12 hours, I was usually able to train about 20 epochs per 12 hour period, at which point I'd have to reconnect and continue the training.
+
 ![alt text](https://github.com/d717an/DLforAI_RCNNs/blob/master/traffic_lights/images/tlights_loss1.png)
 ![alt text](https://github.com/d717an/DLforAI_RCNNs/blob/master/traffic_lights/images/tlights_loss2.png)
+
+The results of the training were poor. When tested, the model would not predict any traffic lights, let alone classify them (as seen in the example image below).
+
 ![alt text](https://github.com/d717an/DLforAI_RCNNs/blob/master/traffic_lights/images/tlights_testex1.png)
 
-### Discussion and Next Steps
+At this point, I had not begun experimenting with the NEXET dataset. I tried decreasing the threshold for the predictions and decreasing the anchor size, but I didn't have any luck. I suspect that the traffic lights are too small in the image for the base settings. The source code resizes the image from 1280 x 720 to 530 x 300 for training speed improvements, and the stride of the RPN model is set to 16, meaning that even with my smaller anchor size, I was likely missing bounding boxes. I think this is one of the reasons my average overlapping boxes value was always lower than 1. 
 
-
-
+### Next Steps
+For next steps, I would start by increasing the image size fed to the model (by decreasing the image reduction) to see if that helped improve the detection. If so, I would also experiment with changing the stride of the model and the downstream dimensional changes to accomodate that. Finally, to save training time, I would experiment with cropping the bottom third of the image.
 
 ## NEXET
+I "forked" my work with the traffic lights dataset to the NEXET dataset (or rather, a portion of it) and had much better luck. I suspect this is because the objects of interest make up a larger portion of the image than traffic lights.
 
 ### Preprocessing
 
